@@ -1,0 +1,44 @@
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      addons:
+        apt:
+          packages: [ libdispatch-dev systemtap-sdt-dev libbsd-dev linux-libc-dev ]
+      env: LIBDISPATCH=custom ASAN=OFF
+
+    - os: linux
+      dist: trusty
+      sudo: required
+      addons:
+        apt:
+          packages: [ libdispatch-dev systemtap-sdt-dev libbsd-dev linux-libc-dev ]
+      env: LIBDISPATCH=custom ASAN=ON
+
+    - os: osx
+      env: ASAN=OFF
+
+    - os: osx
+      env: ASAN=ON
+
+  allow_failures:
+    - env: ASAN=ON
+    - env: LIBDISPATCH=custom ASAN=ON
+
+addons:
+  apt:
+    packages:
+
+before_install:
+  - if [[ ${TRAVIS_OS_NAME} == "linux" ]] && [[ ${LIBDISPATCH} == "custom" ]]; then (cd deps && make libdispatch); fi
+
+language: cpp
+compiler: clang
+
+script:
+  # - make clean do_asan_test
+  - if [[ ${ASAN} == "ON" ]]; then (make clean do_asan_test); else (make clean do_test); fi
+
+after_failure:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then (cat /Users/travis/build/Leereen/cppatch/build/CMakeFiles/CMakeOutput.log); fi

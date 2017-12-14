@@ -1,0 +1,6 @@
+[submodule "tests/gtest"]
+	path = tests/gtest
+	url = https://github.com/google/googletest.git
+[submodule "deps/swift-corelibs-libdispatch"]
+	path = deps/swift-corelibs-libdispatch
+	url = https://github.com/apple/swift-corelibs-libdispatch.git
